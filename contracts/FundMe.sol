@@ -13,6 +13,11 @@ contract FundMe {
     uint256 public constant MINIMUMUSD = 100 * 10**18;
     AggregatorV3Interface public s_priceFeed;
 
+    modifier onlyOwner() {
+        if (msg.sender != owner) revert FundMe__NotOwner();
+        _;
+    }
+
     constructor(address priceFeed) {
         s_priceFeed = AggregatorV3Interface(priceFeed);
         owner = msg.sender;
@@ -24,11 +29,6 @@ contract FundMe {
 
     fallback() external payable {
         fund();
-    }
-
-    modifier onlyOwner() {
-        if (msg.sender != owner) revert FundMe__NotOwner();
-        _;
     }
 
     function fund() public payable {

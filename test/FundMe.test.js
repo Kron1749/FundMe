@@ -93,4 +93,27 @@ describe("FundMe", async function () {
             )
         })
     })
+
+    it("Should return the balance of contract", async () => {
+        const balance = fundMe.provider.getBalance(fundMe.address)
+        const balanceByFunction = fundMe.getBalance()
+        assert.equal(balance.toString(), balanceByFunction.toString())
+    })
+
+    it("Should invoke the fallback function", async () => {
+        ;[deployer1] = await ethers.getSigners()
+        const tx = deployer1.sendTransaction({
+            to: fundMe.address,
+            data: "0x", // Executed with for every non-empty mismatching selector
+        })
+        await expect(tx).to.be.revertedWith("Not enough amount in ETH")
+    })
+    it("Should invoke the receive function", async () => {
+        ;[deployer1] = await ethers.getSigners()
+        const tx = deployer1.sendTransaction({
+            to: fundMe.address,
+            data: "0x", // Executed only with empty selector
+        })
+        await expect(tx).to.be.revertedWith("Not enough amount in ETH")
+    })
 })
