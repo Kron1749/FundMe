@@ -56,4 +56,8 @@ contract FundMe {
     function getOwner() public view returns (address) {
         return owner;
     }
+
+    function getAddressToAmoundFunded(address funder) public view returns (uint256) {
+        return addressesFunded[funder];
+    }
 }
