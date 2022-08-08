@@ -1,22 +1,20 @@
 const { network } = require("hardhat")
-const { developmentChains, DECIMALS, INITIAL_ANSWER } = require("../helper-hardhat-config")
 
-module.exports = async (hre) => {
+const DECIMALS = "8" // Decimals in price
+const INITIAL_PRICE = "200000000000" // Initial price of ETH,in USD will be 2000
+module.exports = async ({ getNamedAccounts, deployments }) => {
     const { deploy, log } = deployments
     const { deployer } = await getNamedAccounts()
     const chainId = network.config.chainId
-
-    //Creating fake price feed for our local development
-    if (chainId == "31337") {
-        log("Detected local network,waiting for mocks deploying")
+    // Deploy mocks if on local chain
+    if (chainId == 31337) {
+        log("Local network detected! Deploying mocks...")
         await deploy("MockV3Aggregator", {
             contract: "MockV3Aggregator",
             from: deployer,
             log: true,
-            args: [DECIMALS, INITIAL_ANSWER],
+            args: [DECIMALS, INITIAL_PRICE],
         })
-        log("Mocks deployed")
     }
 }
-
-module.exports.tags = ["all", "mocks"] // when run "yarn hardhat deploy" will work only with these tags
+module.exports.tags = ["all", "mocks"]

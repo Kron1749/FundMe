@@ -1,16 +1,16 @@
-require("@nomiclabs/hardhat-etherscan")
-require("@nomicfoundation/hardhat-chai-matchers")
-require("hardhat-deploy")
-require("solidity-coverage")
+require("@nomiclabs/hardhat-waffle")
 require("hardhat-gas-reporter")
+require("@nomiclabs/hardhat-etherscan")
 require("dotenv").config()
+require("solidity-coverage")
+require("hardhat-deploy")
 
 const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY
 const RINKEBY_RPC_URL = process.env.RINKEBY_RPC_URL
-const PRIVATE_KEY = process.env.PRIVATE_KEY
+const PRIVATE_KEY =
+    process.env.PRIVATE_KEY || "0x047ea6f89104dce383878e64b341479467d5673a505a1b94bef16ab61c9c671a"
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY
 
-/** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
     defaultNetwork: "hardhat",
     networks: {
@@ -20,7 +20,7 @@ module.exports = {
         },
         rinkeby: {
             url: RINKEBY_RPC_URL,
-            accounts: PRIVATE_KEY,
+            accounts: [PRIVATE_KEY],
             chainId: 4,
             blockConfirmations: 6,
         },
@@ -48,6 +48,7 @@ module.exports = {
     namedAccounts: {
         deployer: {
             default: 0,
+            1: 0,
         },
     },
 }
