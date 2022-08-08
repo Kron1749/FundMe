@@ -40,4 +40,57 @@ describe("FundMe", async function () {
             assert.equal(funder, deployer)
         })
     })
+
+    describe("Withdraw", async () => {
+        beforeEach(async () => {
+            await fundMe.fund({ value: sendValue })
+        })
+        it("Should not withdraw if not the owner", async () => {
+            const fundMeConnectedContract = await fundMe.connect(accounts[1])
+            await expect(fundMeConnectedContract.withdraw()).to.be.revertedWith("FundMe__NotOwner")
+        })
+        it("Should withdraw from one funder", async () => {
+            //Arrange
+            const startingFundMeBalance = await fundMe.provider.getBalance(fundMe.address)
+            const startingDeployerBalance = await fundMe.provider.getBalance(deployer)
+
+            //Act
+            const trxResponse = await fundMe.withdraw()
+            const trxReceipt = await trxResponse.wait(1)
+            const { gasUsed, effectiveGasPrice } = trxReceipt
+            const gasCost = gasUsed.mul(effectiveGasPrice)
+            const endingFundMeBalance = await fundMe.provider.getBalance(fundMe.address)
+            const endingDeployerBalance = await fundMe.provider.getBalance(deployer)
+
+            //Assert
+            assert.equal(endingFundMeBalance, 0)
+            assert.equal(
+                startingFundMeBalance.add(startingDeployerBalance).toString(),
+                endingDeployerBalance.add(gasCost).toString()
+            )
+        })
+        it("Should withdraw from all funders", async () => {
+            //Arrange
+
+            for (i = 1; i < 5; i++) {
+                const fundMeConnectedContract = await fundMe.connect(accounts[i])
+                await fundMeConnectedContract.fund({ value: sendValue })
+            }
+            const startingFundMeBalance = await fundMe.provider.getBalance(fundMe.address)
+            const startingDeployerBalance = await fundMe.provider.getBalance(deployer)
+            //Act
+            const trxResponse = await fundMe.withdraw()
+            const trxReceipt = await trxResponse.wait(1)
+            const { gasUsed, effectiveGasPrice } = trxReceipt
+            const gasCost = gasUsed.mul(effectiveGasPrice)
+            const endingFundMeBalance = await fundMe.provider.getBalance(fundMe.address) // 0
+            const endingDeployerBalance = await fundMe.provider.getBalance(deployer) // starting+starting
+            //Assert
+            assert.equal(endingFundMeBalance, 0)
+            assert.equal(
+                endingDeployerBalance.add(gasCost).toString(),
+                startingDeployerBalance.add(startingFundMeBalance).toString()
+            )
+        })
+    })
 })
