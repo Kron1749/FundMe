@@ -27,9 +27,21 @@ module.exports = {
         compilers: [
             {
                 version: "0.8.8",
+                settings: {
+                    optimizer: {
+                        enabled: true,
+                        runs: 10,
+                    },
+                },
             },
             {
                 version: "0.6.6",
+                settings: {
+                    optimizer: {
+                        enabled: true,
+                        runs: 10,
+                    },
+                },
             },
         ],
     },

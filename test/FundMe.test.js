@@ -16,7 +16,7 @@ describe("FundMe", async function () {
     })
     describe("Constructor", async () => {
         it("Should set the aggregator address correctly", async () => {
-            const response = await fundMe.s_priceFeed()
+            const response = await fundMe.getPriceFeed()
             assert.equal(response, mockV3Aggregator.address)
         })
         it("Should set the owner correctly", async () => {
@@ -27,7 +27,7 @@ describe("FundMe", async function () {
 
     describe("Fund", async () => {
         it("Should not deposit if amount is small", async () => {
-            await expect(fundMe.fund()).to.be.revertedWith("Not enough amount in ETH")
+            await expect(fundMe.fund()).to.be.revertedWith("FundMe__NotEnoughEth")
         })
         it("Should correctly update amount funded", async () => {
             await fundMe.fund({ value: sendValue })
@@ -106,7 +106,7 @@ describe("FundMe", async function () {
             to: fundMe.address,
             data: "0x", // Executed with for every non-empty mismatching selector
         })
-        await expect(tx).to.be.revertedWith("Not enough amount in ETH")
+        await expect(tx).to.be.revertedWith("FundMe__NotEnoughEth")
     })
     it("Should invoke the receive function", async () => {
         ;[deployer1] = await ethers.getSigners()
@@ -114,6 +114,6 @@ describe("FundMe", async function () {
             to: fundMe.address,
             data: "0x", // Executed only with empty selector
         })
-        await expect(tx).to.be.revertedWith("Not enough amount in ETH")
+        await expect(tx).to.be.revertedWith("FundMe__NotEnoughEth")
     })
 })
