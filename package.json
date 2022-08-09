@@ -14,6 +14,13 @@
     "hardhat-deploy": "^0.11.12",
     "hardhat-gas-reporter": "^1.0.7",
     "prettier-plugin-solidity": "^1.0.0-beta.19",
+    "solhint": "^3.3.7",
     "solidity-coverage": "^0.7.18"
+  },
+  "scripts": {
+    "test": "yarn hardhat test",
+    "test:staging": "yarn hardhat test --network rinkeby",
+    "format": "yarn prettier --write",
+    "coverage": "yarn hardhat coverage"
   }
 }
